@@ -2010,7 +2010,7 @@ public:
 
 
 
-#### 33.
+#### 33.最大连续子数组
 
 > 给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
 
@@ -2048,7 +2048,88 @@ public:
 
 
 
-分治法：
+分治法：暂无
+
+
+
+
+
+#### 34. 最大连续和
+
+> 给定一个非负整数数组，你最初位于数组的第一个位置。数组中的每个元素代表你在该位置可以跳跃的最大长度。判断你是否能够到达最后一个位置。
+
+```c
+输入: [2,3,1,1,4]
+输出: true
+
+解释: 我们可以先跳 1 步，从位置 0 到达 位置 1, 然后再从位置 1 跳 3 步到达最后一个位置。
+
+
+```
+
+解题思路： 直接暴力就可以了
+
+```c
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        if(nums.size() == 0) return 0;
+        int arr = 0;
+        for(int i = 0 ; i < nums.size(); i++){
+            if(i == nums.size() - 1) return 1;
+            arr = i + nums[i] > arr ? i + nums[i] : arr;
+            if(arr <= i ) return 0;
+        }
+        return 1;        
+    }
+};
+```
+
+
+
+#### 35. 合并区间
+
+给出一个区间的集合，请合并所有重叠的区间。
+
+```c
+输入: [[1,3],[2,6],[8,10],[15,18]]
+输出: [[1,6],[8,10],[15,18]]
+解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+```
+
+解题思路： 一开始想到的想到的是给 vector 的开始排序， 然后遍历一遍就可以知道结束的地方
+
+后来发现， 这个是可以分开的， start 和 end 分开来也行！
+
+```c++
+class Solution {
+typedef vector<vector<int> > vvint;
+typedef vector<int> vint;
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        int len = intervals.size();
+        vvint ans;
+        if(len == 0) return ans;
+        int start[len], end[len];
+        for(int i = 0; i < len; i++){
+            start[i] = intervals[i][0];
+            end[i] = intervals[i][1];
+        }
+        sort(start, start + len);
+        sort(end, end+ len);
+        for(int i = 0, j = 0; i < len; i ++){
+            if(i == len-1 || start[i + 1] > end[i]){//最后一个直接放
+                vint tmp;
+                tmp.push_back(start[j]);
+                tmp.push_back(end[i]);
+                ans.push_back(tmp);
+                j = i + 1;
+            }
+        }
+        return ans;
+    }
+};
+```
 
 
 
@@ -2056,17 +2137,195 @@ public:
 
 
 
+#### 34. 不同路径
+
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+
+问总共有多少条不同的路径？
+
+![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200210100443.png)
+
+```c
+例如，上图是一个7 x 3 的网格。有多少可能的路径？
+
+说明：m 和 n 的值均不超过 100。
+```
+
+递归求解： 换来的是超时。。。
+
+```c++
+class Solution {
+private:
+    int m,n;
+public:
+    int uniquePaths(int m, int n) {
+        this->m = m;
+        this->n = n;
+        int ans = 0;
+        search(ans,1,1);
+        return ans;
+    }
+    void search(int &ans, int curm, int curn){
+        if(curm > m || curn > n) return;
+        if(curn == n && curm == m){
+            ans++;
+            return;
+        }
+        if(curm < m) search(ans,curm + 1,curn);
+        if(curn < n) search(ans,curm, curn + 1);
+    }
+};
+```
+
+换用dp：
+
+```c++
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        int dp[m][n] = {0};
+        for(int i = 0 ; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(j == 0 && i == 0) dp[i][j] = 1;
+                else if(j > 0 && i > 0)    dp[i][j] = dp[i][j - 1] + dp[i-1][j];
+                else if(j == 0)  dp[i][j]= dp[i-1][j];
+                else if(i == 0) dp[i][j] = dp[i][j-1];
+                }
+            }
+        
+        return dp[m-1][n-1];
+    }
+};
+```
+
+#### 35. 不同路径Ⅱ
+
+题目一样，但是加上一个障碍物的存在， 思路一样的， 这个测试样例坑人的， 返回型是int的， 但是中间值是超过int的， 坑！！！
+
+```c++
+class Solution {
+    typedef vector<vector<int>> vvint;
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        if(obstacleGrid.size() == 0) return 0;
+        int m = obstacleGrid.size();
+        int n = obstacleGrid[0].size();
+        long dp[m][n] = {0};
+        for(int i = 0 ; i < m; i++){
+            for(int j = 0; j < n; j++){
+                dp[i][j] = 0;
+                if(obstacleGrid[i][j]) continue;
+                if(j == 0 && i == 0) dp[i][j] = 1;
+                else if(j > 0 && i > 0)    dp[i][j] = dp[i][j - 1] + dp[i-1][j];
+                else if(j == 0)  dp[i][j]= dp[i-1][j];
+                else if(i == 0) dp[i][j] = dp[i][j-1];
+               if(i > 8 && j > 8) cout << i << " " << j << " " << dp[i][j] <<endl;
+            }
+        }
+        return dp[m-1][n-1];
+
+    }
+};
+```
 
 
 
+#### 36.最小路径和
+
+给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+说明：每次只能向下或者向右移动一步。
+
+```
+输入:
+[
+  [1,3,1],
+  [1,5,1],
+  [4,2,1]
+]
+输出: 7
+解释: 因为路径 1→3→1→1→1 的总和最小。
+```
+
+解题思路： 这题也是dp 挺简单的， 值得注意的是  vvint 的速度执行 会 比  int 快！
+
+```c++
+class Solution {
+typedef vector<vector<int>> vvint;
+typedef vector<int> vint;
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+        int y = grid.size();
+        if(y == 0) return 0;
+        int x = grid[0].size();
+        vvint dp(y,vector<int>(x));
+        for(int i = 0; i < y; i++){
+            for(int j = 0; j < x; j++){
+                dp[i][j] = 0;
+                if(i ==0 && j == 0) dp[i][j] = grid[i][j];
+                else if(i > 0 && j > 0) dp[i][j] = min(dp[i][j-1],dp[i-1][j]) + grid[i][j];
+                else if(i == 0 ) dp[i][j] = dp[i][j-1] + grid[i][j];
+                else  dp[i][j] = dp[i-1][j] + grid[i][j];
+            }
+        }
+        return dp[y-1][x-1];
+    }
+};
+```
 
 
 
+#### 37.验证给定的字符串是否可以解释为十进制数字。
 
+```c++
+"0" => true
+" 0.1 " => true
+"abc" => false
+"1 a" => false
+"2e10" => true
+" -90e3   " => true
+" 1e" => false
+"e3" => false
+" 6e-1" => true
+" 99e2.5 " => false
+"53.5e93" => true
+" --6 " => false
+"-+3" => false
+"95a54e53" => false
+```
 
+编译原理的自动机！！！ 状态难画！ 
 
-
-
+```c
+class Solution {
+public:
+    bool isNumber(string s) {
+        int a[9][4]={{1,-1,8,2},{1,4,3,-1},{1,-1,8,-1},{5,4,-1,-1},{7,-1,-1,6},{5,4,-1,-1},{7,-1,-1,-1},{7,-1,-1,-1},{3,-1,-1,-1}};
+        int state=0;
+        int i=0;
+        while(s[i]==' '){
+            i+=1;
+        }
+        int j=s.length()-1;
+        while(s[j]==' '){
+            j-=1;
+        }
+        while(i<=j){
+            if(s[i]>='0'&&s[i]<='9') state=a[state][0];
+            else if(s[i]=='e') state=a[state][1];
+            else if(s[i]=='.') state=a[state][2];
+            else if(s[i]=='+'||s[i]=='-') state=a[state][3];
+            else return false;
+            if(state==-1) return false;
+            i+=1;
+        }
+        if(state==7||state==1||state==5||state==3) return true;
+        return false;
+    }
+};
+```
 
 
 
