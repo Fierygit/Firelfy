@@ -2331,23 +2331,140 @@ public:
 
 
 
+#### 38. 爬楼梯
+
+> 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。每次你可以爬 1 或 2 个台阶。你有多少种不同的方可以爬到楼顶呢？
+
+注意：给定 n 是一个正整数。
+
+```
+输入： 2
+输出： 2
+解释： 有两种方法可以爬到楼顶。
+
+1.  1 阶 + 1 阶  2 阶
+```
+
+解题思路： 简单的dp问题
+
+```c++
+class Solution {
+public:
+    int climbStairs(int n) {
+        if(n == 1) return 1;
+        else if(n == 2) return 2;
+        int a[n];
+        a[0] = 1; a[1] = 2;
+        for(int i = 2; i < n; i++){
+            a[i] = a[i-1] + a[i-2];
+        }
+        return a[n-1];
+    }
+};
+```
 
 
 
+#### 39. 单词最短距离
+
+> 给定两个单词 word1 和 word2，计算出将 word1 转换成 word2 所使用的最少操作数 。
+
+你可以对一个单词进行如下三种操作：
+
+插入一个字符
+删除一个字符
+替换一个字符
+
+```c++
+输入: word1 = "horse", word2 = "ros"
+输出: 3
+解释: 
+horse -> rorse (将 'h' 替换为 'r')
+rorse -> rose (删除 'r')
+rose -> ros (删除 'e')
+```
+
+解题思路： 刚拿到这道题时完全没有思路可言， 我是看了题解才知道怎么做的！
+
+还是dp， 又是dp！
+
+dp [i] [j]: 表示  `word1` 到 `i` 位置转换成 `word2` 到 `j` 位置需要最少步数 
+
+当 word1[i] == word2[j]，dp[i] [j] = dp[i-1] [j-1]；
+
+当 word1[i] != word2[j]，dp[i][j] = min(dp[i-1] [j-1], dp[i-1] [j], dp[i] [j-1]) + 1
+
+其中，dp[i-1] [j-1] 表示替换操作，dp[i-1] [j] 表示删除操作，dp[i][j-1] 表示插入操作。
+
+![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200214163734.png)
+
+明白后还是挺简单的！
+
+```c++
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        int x = word1.length();
+        int y = word2.length();
+        if(x == 0 && y == 0) return 0;
+        int dp[x+1][y+1] = {0};
+        for(int i = 1; i <= y; i++) dp[0][i] = dp[0][i-1] + 1;
+        for(int i = 1; i <= x; i++) dp[i][0] = dp[i-1][0] + 1;
+
+        for(int i = 1; i <= x; i ++){
+            for(int j = 1; j <= y; j++){
+                if(word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1];
+                else dp[i][j] = min(min(dp[i-1][j-1], dp[i-1][j]) , dp[i][j-1]) + 1;
+            }
+        }
+        return dp[x][y];
+    }
+};
+```
 
 
 
+#### 40.颜色分类
 
+> 给定一个包含红色、白色和蓝色，一共 n 个元素的数组，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
 
+此题中，我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。
 
+```
+输入: [2,0,2,1,1,0]
+输出: [0,0,1,1,2,2]
+```
 
+解题思路： 三个指针， 分为三部分！
 
-
-
-
-
-
-
+```c++
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int p0,cur,p2, len, tmp;
+        len = nums.size();
+        cur = p0 = 0;
+        p2 = len - 1;        
+        while(cur <= p2){
+            switch(nums[cur]){
+                case 1:
+                    cur++;
+                    break;
+                case 0:
+                    tmp = nums[cur];
+                    nums[cur++] = nums[p0];
+                    nums[p0++] = tmp;
+                    break;
+                case 2:
+                    tmp = nums[p2];
+                    nums[p2--] = nums[cur];
+                    nums[cur] = tmp;
+                    break;
+            }    
+        }   
+    }
+};
+```
 
 
 
