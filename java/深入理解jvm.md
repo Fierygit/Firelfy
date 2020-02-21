@@ -6,6 +6,64 @@ i do not love java at all!
 
 
 
+### 内存机制
+
+
+
+#### 运行时数据区域
+
+- 程序计数器
+
+线程私有，执行native方法时为空！ 不会OutOfMemoryError！
+
+- java虚拟机栈
+
+线程私有，存放局部变量表，动态连接，返回信息等，每一个方法对应一个栈帧!   
+
+OutOfMemoryError （扩展时无法申请）    OutOfMemoryError(超过允许最大深度)
+
+- 本地方法栈
+
+与虚拟机栈类似， 只是执行本地方法栈！
+
+- java堆
+
+**唯一目的**： 存放对象实例； 几乎所有的对象实例都在这里分配内存， gc的主要区域！
+
+- 方法区
+
+与堆一样，放**共享数据**， 加载的类信息（存放类的版本，信息，方法，接口等），常量， 静态变量等
+
+- 运行时常量池
+
+属于方法区的一部分， 出了上述的， 还需存放**编译时**生成的字面量和符号引用
+
+- 直接内存
+
+不在堆， 而是直接使用物理内存
+
+#### 对象的创建
+
+- 检查是否被加载
+- 分配内存
+- 初始化0值
+- 设置对象的信息（如是哪个类的实例等等）
+- 调用 用户或者默认的< init > 方法
+
+
+
+#### 对象的访问
+
+通过句柄，将实例数据独立出来， （实例数据和对象类型数据多了初始化信息等）
+
+![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200221224645.png)
+
+直接指针访问
+
+![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200221224710.png)
+
+这两种对象访问方式个有优势，使用句柄来访问的最大好处就是reference中存储的是稳定的句柄地址，在对象被移动（垃圾收集时移动对象是非常普遍的）时只会改变句柄中的实例数据指针，而reference本身不需要修改。
+
 
 
 
@@ -26,7 +84,7 @@ javac 生成的是java字节码， 相当于编译原理的前段， javac 没�
 
 javac 编译后生成如下的字节码的一部分：
 
-![image-20200211103302553](C:%5CUsers%5CFirefly%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200211103302553.png)
+![](https://raw.githubusercontent.com/Fierygit/picbed/master/image-20200211103302553.png)
 
 - 魔术
 
