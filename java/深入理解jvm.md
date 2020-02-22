@@ -24,7 +24,7 @@ OutOfMemoryError （扩展时无法申请）    OutOfMemoryError(超过允许最
 
 - 本地方法栈
 
-与虚拟机栈类似， 只是执行本地方法栈！
+与虚拟机栈类似， 只是执行本地方法的栈！
 
 - java堆
 
@@ -40,7 +40,7 @@ OutOfMemoryError （扩展时无法申请）    OutOfMemoryError(超过允许最
 
 - 直接内存
 
-不在堆， 而是直接使用物理内存
+不在堆， 而是直接使用物理内存（使用unsafe 类分配）
 
 #### 对象的创建
 
@@ -54,15 +54,74 @@ OutOfMemoryError （扩展时无法申请）    OutOfMemoryError(超过允许最
 
 #### 对象的访问
 
-通过句柄，将实例数据独立出来， （实例数据和对象类型数据多了初始化信息等）
+- 通过句柄，将实例数据独立出来， （实例数据比类型数据多了初始化信息等）
 
 ![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200221224645.png)
 
-直接指针访问
+- 直接指针访问
 
 ![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200221224710.png)
 
 这两种对象访问方式个有优势，使用句柄来访问的最大好处就是reference中存储的是稳定的句柄地址，在对象被移动（垃圾收集时移动对象是非常普遍的）时只会改变句柄中的实例数据指针，而reference本身不需要修改。
+
+#### 测试代码
+
+- java堆溢出(无限创建变量)
+
+```java
+/**
+ * @author Firefly
+ * @version 1.0
+ * @date 2020/2/22 9:20
+ * VM args: -Xms20m -Xmx20m
+ */
+public class testheap {
+    static class test {
+    }
+    public static void main(String[] args) {
+        ArrayList<test> tests = new ArrayList<>();
+        while (true) {
+            tests.add(new test());
+        }
+    }
+}
+// Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+```
+
+- 栈溢出(递归调用函数)
+
+```java
+public class Teststack {
+    private int len = 1;
+    public void test(){
+        len++;
+        test();
+    }
+    public static void main(String[] args) {
+        Teststack t = new Teststack();
+        t.test();
+    }
+}
+// Exception in thread "main" java.lang.StackOverflowError
+```
+
+栈的内存溢出可以通过建立线程设置得到！
+
+- 常量池溢出
+
+测试不出。。
+
+
+
+### 垃圾回收
+
+
+
+
+
+
+
+
 
 
 
@@ -86,9 +145,9 @@ javac 编译后生成如下的字节码的一部分：
 
 ![](https://raw.githubusercontent.com/Fierygit/picbed/master/image-20200211103302553.png)
 
-- 魔术
+- 魔数
 
-前4个字节 CAFEBABE 表示魔数， 大多数文件都有魔数 ， 很多java书都是一杯咖啡！
+前4个字节 CAFABABE 表示魔数， 大多数文件都有魔数 ， 很多java书都是一杯咖啡！
 
 - 接下来 4 个字节为 版本号， 我用1.8 编译的 所以`00 00 00 37` 表示8，
 
@@ -102,7 +161,7 @@ javac 编译后生成如下的字节码的一部分：
 
 ![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200211104155.png)
 
-0A 查表表示 method， 由表得知下一字节为索引， 索引类型0， 即字符串， 然后得到一个utf 常量值！
+0A 查表表示 method， 由表得知下一字节为索引， 索引类型 0， 即字符串， 然后得到一个utf 常量值！
 
 javap 可以自动帮我们转换， 因此， java是可以反编译的！
 
