@@ -2468,11 +2468,7 @@ public:
 
 
 
-
-
-
-
-#### 79. 单词搜索
+#### 42. 单词搜索
 
 >  给定一个二维网格和一个单词，找出该单词是否存在于网格中。
 
@@ -2491,7 +2487,7 @@ board =
 给定 word = "ABCB", 返回 false.
 ```
 
-解题思路： 这道题最难的是， 回溯，   找过的路不能再找， 所以临时改变一下路径， 搜索完了后重新恢复数据，记得多看这道题， 经常出现！！！
+解题思路： 这道题最难的是， 回溯，   **找过的路不能再找， 所以临时改变一下路径**， 搜索完了后==重新恢复数据==，记得多看这道题， 经常出现！！！
 
 ```c++
 class Solution {
@@ -2531,9 +2527,41 @@ private:
 
 
 
+####  43. pow(*x*, *n*)
 
+> 实现 pow(*x*, *n*) ，即计算 x 的 n 次幂函数。
 
+```
+输入: 2.00000, 10
+输出: 1024.00000
+```
 
+解题思路： 
+
+这道题我认为关键的地方是分治法， 把底层会重复计算的数据删除掉，不去计算！
+
+```c++
+class Solution {
+public:
+    double myPow(double x, int n) {
+        if(n == 0) return 1;
+        int flag = n < 0 ? 1 : 0;
+        long m = n;
+        m = m < 0 ? -m : m;
+        if(m == 1) return flag ? 1/x : x;
+        else if(m == 2){
+            return flag ? 1 / (x * x) : x * x;
+        }else {
+            double temp = myPow(x, (flag ? - m/2: m/2));
+            if(m % 2 == 0){             
+                return temp * temp;
+            }else{
+                return temp * temp  * (flag ? 1/x : x);
+            }
+        }
+    }
+};
+```
 
 
 
