@@ -2565,9 +2565,74 @@ public:
 
 
 
+#### 44.八皇后问题
+
+>  n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+ ![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200223195130.png)
+
+上图为 8 皇后问题的一种解法。
+
+给定一个整数 n，返回所有不同的 n 皇后问题的解决方案。
+
+每一种解法包含一个明确的 n 皇后问题的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+
+解题思路： 回溯， 当此时是可以求解的， 把当前值置为1， 搜索完后恢复状态， 写了1.30 h
+
+```c++
+class Solution {
+    typedef vector<vector<string>> vvstr;
+    typedef vector<vector<int>> vvint;
+    typedef vector<int> vint;
+    typedef vector<string> vstr;
+public:
+    vector<vector<string>> solveNQueens(int n) {
+        vvint m(n,vint(n));
+        vvstr ans;
+        search(0, n,ans, m);
+        return ans;
+    }
+    void search(int line,int n, vvstr& ans, vvint& m){
+        if(line == n){
+            string temp;
+            vstr an;
+            for(int i = 0; i < n; i++){
+                temp = "";
+                for(int j = 0; j < n; j++){
+                    if(m[i][j] == 0) temp += ".";
+                    else temp += "Q"; 
+                }
+                an.push_back(temp);
+            }
+            ans.push_back(an);
+        }
+        for(int i = 0; i < n; i++){  // 对于这一行的每一个作为答案
+           // cout << line << " i: " << i  << endl;
+            for(int j = 0; j < n; j++){ 
+                if(m[j][i] == 1) break; // 检查列
+                // 斜
+                int x1 = line - (i - j);
+                if( x1 >= 0 &&  x1 < n &&  m[x1][j] == 1 ) break;
+
+                x1 = line + (i - j);
+                if(x1 >= 0 && x1 < n && m[x1][j] == 1) break; 
+               // cout << " " << j;        
+                if(j == n - 1){ //列检查完毕
+                   cout << endl; 
+                    m[line][i] = 1;
+                    search(line + 1, n, ans, m);
+                    m[line][i] = 0;
+                }                  
+            }
+             //cout << endl;       
+        }
+    }
+};
+```
 
 
 
+#### 44.
 
 
 
