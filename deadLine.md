@@ -1,5 +1,9 @@
 # deadline
 
+> 真正的大师永远都怀着一颗学徒的心 	--易
+
+
+
 ```python
 while(input() != null){
     study();
