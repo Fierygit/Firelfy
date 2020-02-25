@@ -2632,9 +2632,88 @@ public:
 
 
 
-#### 44.
+#### 44. 
 
+给定一个二叉树，返回它的中序遍历。
 
+示例:
+
+```c++
+输入: [1,null,2,3]
+   1
+    \
+     2
+    /
+   3
+
+输出: [1,3,2]
+```
+
+解题思路： 递归太简单了
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+    typedef vector<int> vint;
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+            vint ans;
+            traverse(root,ans);
+            return ans;
+    }
+    void traverse(TreeNode* node, vint& ans){
+        if(node != NULL){
+            traverse(node->left, ans);
+            ans.push_back(node->val);
+            traverse(node->right, ans);
+        }
+    }
+};
+```
+
+非递归， 多看看！
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+typedef vector<int> vint;
+
+public:
+//递归是使用了函数的栈， 迭代的话模拟出一个栈给它  
+    vector<int> inorderTraversal(TreeNode* root) {
+          vector<int> ans;
+        TreeNode* p = root;
+        stack<TreeNode*> st;
+        while(p || !st.empty()){
+            while(p){
+                st.push(p);
+                p = p->left;
+            }
+            p = st.top();
+            st.pop();
+            ans.push_back(p->val);
+            p = p->right;
+        }
+        return ans;
+    }
+};
+```
 
 
 

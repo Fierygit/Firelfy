@@ -4,9 +4,9 @@
 
 #  Firefly
 
- ![](https://raw.githubusercontent.com/Fierygit/picbed/master/blog.jpg)                                                                											
+ <img src="https://raw.githubusercontent.com/Fierygit/picbed/master/20200225125705.png" style="zoom: 33%;" />                                                                											
 
-> github : [give a start please](https://www.github.com/fierygit)  
+> github : [a star please](https://www.github.com/fierygit)  
 
 > csdn: 	[Fierygit](https://blog.csdn.net/fierygit)
 
