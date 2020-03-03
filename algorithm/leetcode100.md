@@ -2632,7 +2632,7 @@ public:
 
 
 
-#### 44. 
+#### 44.  二叉树的中序遍历
 
 给定一个二叉树，返回它的中序遍历。
 
@@ -2717,12 +2717,190 @@ public:
 
 
 
+#### 45.不同的二叉搜索树
+
+
+给定一个整数 *n*，求以 1 ... *n* 为节点组成的二叉搜索树有多少种？
+
+**示例:**
+
+```c++
+输入: 3
+输出: 5
+解释:
+给定 n = 3, 一共有 5 种不同结构的二叉搜索树:
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+```
+
+解题思路：
+
+这道题主要推导dp的递推式子！
+
+问题是计算不同二叉搜索树的个数。为此，我们可以定义两个函数：
+
+- G(n): 长度为n的序列的不同二叉搜索树个数。
+
+- F(i,n): 以i为根的不同二叉搜索树个数(1 \leq i \leq n1≤i≤n)。
+
+![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200301195813.png)
+
+![](https://raw.githubusercontent.com/Fierygit/picbed/master/20200301195932.png)
+
+```c++
+class Solution {
+public:
+    int numTrees(int n) {
+        int g[n+1] = {0};
+        g[0] = g[1] = 1;
+        for(int i = 2; i <= n; i++){
+            for(int j = 1; j <= i; j ++){
+                g[i] += g[j-1] * g[i-j];
+            }
+        }
+        return g[n];
+    }
+};
+```
 
 
 
+#### 46.验证二叉搜索树
+
+给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+假设一个二叉搜索树具有如下特征：
+
+- 节点的左子树只包含小于当前节点的数。
+- 节点的右子树只包含大于当前节点的数。
+- 所有左子树和右子树自身必须也是二叉搜索树。
+
+```
+输入:
+    2
+   / \
+  1   3
+输出: true
+```
+
+思路不难： 递归处理， 中间的数据会超int， 带取值域搜索
+
+或者  中序遍历， 带一个值搜索！！！
+
+
+```c
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isValid(TreeNode* current,long left,long right){
+        if(current==nullptr) return true;
+        else if(current->val<=left||current->val>=right) return false;
+        return isValid(current->left,left,current->val)
+            &&isValid(current->right,current->val,right);
+    }
+    bool isValidBST(TreeNode* root) {
+        return isValid(root,LONG_MIN,LONG_MAX);
+    }
+};
+```
 
 
 
+#### 47. 对称二叉树
+
+> 给定一个二叉树，检查它是否是镜像对称的。
+
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+```
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+```
+
+解题思路： 
+
+基于递归的解决方案！ 这个较为简单！
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        if(root == NULL) return true;
+        return isValid(root->left,root->right);
+    }
+
+    bool isValid(TreeNode* left, TreeNode* right){
+        if(left == NULL && right == NULL) return true;
+        if(left == NULL || right == NULL) return false;
+        if(left->val != right-> val) return false;
+        return isValid(left->left, right->right) && 
+            isValid(left->right, right->left);
+    }
+};
+```
+
+非递归的方法， 使用一个栈来模拟方法的递归过程：
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+#include <stack>
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        if(root == NULL) return true;
+        stack<TreeNode*> le, ri;
+        le.push(root->left);
+        ri.push(root->right);
+        TreeNode * t1, * t2;
+        while(true){
+            if(le.empty() && ri.empty()) return true;
+            if(le.empty() || ri.empty()) return false;
+            t1 = le.top(); t2 = ri.top();
+            le.pop(); ri.pop();
+            if(t1 == NULL && t2 == NULL){
+                continue;
+            } 
+            if(t1== NULL || t2 == NULL) return false;
+            if(t1->val != t2->val) return false;
+            le.push(t1->right);ri.push(t2->left);
+            le.push(t1->left); ri.push(t2->right);
+        }
+        return true;
+    }
+};
+```
 
 
 
