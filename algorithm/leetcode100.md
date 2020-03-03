@@ -2904,6 +2904,68 @@ public:
 
 
 
+#### 48. 二叉树的层次遍历
+
+给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。
+
+例如:
+给定二叉树: [3,9,20,null,null,15,7],
+```c
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回其层次遍历结果：
+
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+```
+
+解题思路：
+
+​	按照遍历的思想模拟
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+typedef vector<vector<int> > vvint;
+typedef vector<int> vint;
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        vvint ans;
+        if(root == NULL) return ans;
+        vector<TreeNode*> set = {root};
+        solve(ans,set);
+        return ans;
+    }
+    void solve(vvint &ans, vector<TreeNode*> set){
+        vint tmp;
+        for(int i = 0; i < set.size(); i++)
+            tmp.push_back(set[i]->val);
+        ans.push_back(tmp);
+        
+        vector<TreeNode*> nodes;
+        for(int i = 0; i < set.size(); i++){
+            if(set[i]->left) nodes.push_back(set[i]->left);
+            if(set[i]->right) nodes.push_back(set[i]->right);
+        }
+        if(nodes.size() != 0) solve(ans, nodes);
+    }
+};
+```
+
 
 
 
