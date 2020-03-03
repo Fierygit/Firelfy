@@ -15,7 +15,13 @@ tags:
 
 
 
+# <center> c / c++ note</center>
+
 c / c++ 遇到的bug 或者小技巧集
+
+
+
+[TOC]
 
 
 
