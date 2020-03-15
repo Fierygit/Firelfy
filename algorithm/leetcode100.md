@@ -2968,69 +2968,353 @@ public:
 
 
 
+#### 49. 二叉树的最大深度
 
+难度简单471收藏分享切换为英文关注反馈
 
+给定一个二叉树，找出其最大深度。
 
+二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
 
+**说明:** 叶子节点是指没有子节点的节点。
+
+**示例：**
+给定二叉树 `[3,9,20,null,null,15,7]`，
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+返回它的最大深度 3 。
+
+解题思路： 练手题， 太简单了
 
 ```c
-static int hashFunction( char *key)
-{
-    int temp = 0;
-    int i = 0;
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 
-    while (key[i] != '\0')
-    {
-	temp = ((temp << SHIFT) + key[i]) % MAXTABLESIZE;
-	++i;
-    }
-
-    return temp;
-}
-```
-
-
-
-
-
-
-
-
-
-
-
-####  101.删除排序数组中的重复项
-
-> 给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
-
-不要使用额外的数组空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。
-
-```
-给定数组 nums = [1,1,2], 
-
-函数应该返回新的长度 2, 并且原数组 nums 的前两个元素被修改为 1, 2。 
-
-你不需要考虑数组中超出新长度后面的元素。
-```
-
-思路： 使用双指针法， 前面的指针判断是否相等！
-
-```c
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        int guard, ans;
-        ans = guard  = 0;
-        if(nums.size() == 0) return 0;
-        while(true){
-            while(guard + 1 < nums.size() && nums[guard] == nums[guard+1])guard++;
-            nums[ans++] = nums[guard++];
-            if(guard == nums.size()) break;        
-        }
+    int maxDepth(TreeNode* root) {
+        int ans = 0;
+        solve(ans,0,root);
         return ans;
+    }
+
+    void solve(int &ans, int cur, TreeNode* cu){
+        ans = max(ans,cur);
+        if(cu == NULL) return;
+        solve(ans, cur + 1, cu->left);
+        solve(ans, cur + 1, cu->right);
+    }
+
+};
+```
+
+
+
+#### 50. 从前序与中序遍历序列构造二叉树
+
+> 根据一棵树的前序遍历与中序遍历构造二叉树。
+
+**注意:**
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+```
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+```
+
+返回如下的二叉树：
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+解题思路： 按要求来！
+
+```c
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+    typedef vector<int> vint;
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return solve(preorder,inorder, 0,inorder.size(), 0,preorder.size());
+    }
+    TreeNode * solve(vint& pre, vint& ino, int a1, int a2, int b1, int b2){
+        if(a1 >= a2) return NULL;
+        int first = pre[a1];
+        int index;
+        TreeNode* root= new TreeNode(first);
+        for(int i = b1; i < b2; i ++)
+            if(ino[i] == first ){
+                index = i;
+                break;
+            }
+        //cout << a1 << " " << a2  << " " << b1 << " " << b2 << endl;
+        root->left = solve(pre,ino,a1 + 1, a1 + index - b1 + 1, b1, index);
+        root->right = solve(pre,ino,a1 + index - b1 + 1,a2, index + 1, b2);
+        return root;
     }
 };
 ```
+
+
+
+
+
+#### 51. 只出现一次的数字
+
+给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？
+
+```c++
+输入: [2,2,1]
+输出: 1
+```
+
+解题思路：真的没有想到这么巧， 使用位运算, 相同的异或了之后， 数据不变
+
+```c++
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+            int num = 0;
+            for(int i = 0; i < nums.size(); i++){
+                num ^= nums[i];
+            }
+            return num;
+    }
+};
+```
+
+#### 52. 环形链表
+
+给定一个链表，判断链表中是否有环。
+
+为了表示给定链表中的环，我们使用整数 `pos` 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 `pos` 是 `-1`，则在该链表中没有环。
+
+快慢指针，快点指针会追上慢的指针！
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(head == NULL) return false;
+        ListNode* fir = head;
+        ListNode* sec = head;
+        while(true){
+            if(fir->next != NULL) fir = fir->next;
+            if(sec->next != NULL) sec = sec->next;
+            if(sec->next != NULL) sec = sec ->next;
+            if(fir == sec){// 值有可能重复
+                if(fir->next ==NULL) return false;
+                else return true;
+            }
+        }
+    }
+};
+```
+
+
+
+#### 53. 环形链表 II
+
+给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 `null`。
+
+为了表示给定链表中的环，我们使用整数 `pos` 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 `pos` 是 `-1`，则在该链表中没有环。
+
+解题思路： 我一开始想到的是让一个节点先走，然后面那个追相等的时候，判断有环
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* detectCycle(ListNode* head) {
+	ListNode* fastPtr=head, *slowPtr=head;
+	// 让fast与slow指针第一次相遇
+	while (fastPtr!=NULL && fastPtr->next!=NULL){
+		fastPtr = fastPtr->next->next;
+		slowPtr = slowPtr->next;
+		if (fastPtr==slowPtr){
+			// 从相遇点再走“非环部分长度”一定可以再次走到环起点
+			fastPtr = head;
+			while (fastPtr != slowPtr){
+				fastPtr = fastPtr->next;
+				slowPtr = slowPtr->next;
+			}
+			return fastPtr;
+			break;
+		}
+	}
+	return nullptr;
+}
+};
+```
+
+
+
+
+
+
+
+#### 54. LRU缓存机制
+
+运用你所掌握的数据结构，设计和实现一个  LRU (最近最少使用) 缓存机制。它应该支持以下操作： 获取数据 get 和 写入数据 put 。
+
+获取数据 get(key) - 如果密钥 (key) 存在于缓存中，则获取密钥的值（总是正数），否则返回 -1。
+写入数据 put(key, value) - 如果密钥不存在，则写入其数据值。当缓存容量达到上限时，它应该在写入新数据之前删除最近最少使用的数据值，从而为新的数据值留出空间。
+
+进阶:
+
+你是否可以在 O(1) 时间复杂度内完成这两种操作？
+
+```c++
+LRUCache cache = new LRUCache( 2 /* 缓存容量 */ );
+
+cache.put(1, 1);
+cache.put(2, 2);
+cache.get(1);       // 返回  1
+cache.put(3, 3);    // 该操作会使得密钥 2 作废
+cache.get(2);       // 返回 -1 (未找到)
+cache.put(4, 4);    // 该操作会使得密钥 1 作废
+cache.get(1);       // 返回 -1 (未找到)
+cache.get(3);       // 返回  3
+cache.get(4);       // 返回  4
+```
+
+解题思路：
+
+模仿 redis 的设计思路，  索引用map， 然后移动使用 list， 找基于 map O（1）时间复杂度， 移动基于链表， 也是O（1）时间复杂度！
+
+```c++
+class LRUCache {  
+    struct List{
+        int key,val;
+        List* next, *pre;
+        List(int key, int v){
+            this->val = v;
+            this->key = key;
+        }
+    };
+    int capacity, max;
+    List *head, *tail;
+    map<int, List*> cap;
+
+public:
+    LRUCache(int capacity) {
+        this->max = capacity;
+        this->capacity = 0;
+        head = tail = NULL;
+    }
+    void mv2head(List* tmp){
+        if(tmp != head){                 // 如果不是头结点, 头结点不用移动
+            List *p = tmp->pre;
+            if(tmp == tail){
+                p->next = NULL;
+                tail = p;     
+            }else{
+                p->next = tmp->next;
+                tmp->next->pre = p;
+            }
+            //放到前面
+            tmp->next = head;
+            head->pre = tmp;
+            head = tmp;
+        } 
+    }
+    void rm(){
+        if(this->capacity > this->max){
+            cap[tail->key] = NULL;  
+            capacity--;
+            tail = tail->pre;  // 空的容器， 不考虑
+            delete tail->next;
+            tail->next = NULL; 
+        }
+    }
+    
+    int get(int key) {
+        List* tmp = cap[key];
+        //cout << "get key: " << key  << " " << tmp<< endl;
+        if(tmp == NULL) return -1;
+        mv2head(tmp);
+        return tmp->val;
+    }
+    
+    void put(int key, int value) {
+        List* tmp = cap[key];
+        if(tmp == NULL){  // 不存在键
+            List* newL = new List(key,value);
+            cap[key] = newL;
+            this->capacity++;
+            if(head == NULL){
+                tail = head = newL;
+                newL->pre = newL->next = NULL;
+                return;
+            }
+            head->pre = newL;
+            newL->next = head;
+            head = newL;
+            rm();   
+        }else{
+            tmp->val = value;
+            mv2head(tmp);
+        }
+    }
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+```
+
+
+
+
 
 
 
