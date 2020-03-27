@@ -13,7 +13,7 @@ void study(){
     print("love");
     fmt.Println("study") 
     cout << "very" << endl;
-    System.out.println("study");   
+    System.out.println("much");   
     for i in things:
     	do_right_now(i)
 }

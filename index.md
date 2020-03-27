@@ -6,7 +6,7 @@
 
  <img src="https://raw.githubusercontent.com/Fierygit/picbed/master/20200225125705.png" style="zoom: 33%;" />                                                                											
 
-> github : [a star please](https://www.github.com/fierygit)  
+> github : [Fierygit](https://www.github.com/fierygit)  
 
 > csdn: 	[Fierygit](https://blog.csdn.net/fierygit)
 
